@@ -130,7 +130,7 @@
       display: flex;
       justify-content: flex-end;
       margin-bottom: 8px;
-      min-height: 24px; /* Чтобы область не прыгала при скрытии крестика */
+      min-height: 24px; /* Чтобы шапка не схлопывалась, когда крестик скрыт */
     }
 
     .clear-btn {
@@ -138,7 +138,7 @@
       border: none;
       color: #c4c6d0;
       cursor: pointer;
-      display: flex;
+      display: none; /* Скрыто по умолчанию */
       align-items: center;
       justify-content: center;
     }
@@ -155,7 +155,7 @@
       background: none;
       border: none;
       color: #e3e2e6;
-      font-size: 16px; /* Размер уменьшен до 16px */
+      font-size: 18px; /* Изменено с 20px на 18px */
       font-weight: 400;
       line-height: 1.4;
       resize: none;
@@ -177,6 +177,7 @@
       cursor: pointer;
       margin-top: 16px;
       width: 100%;
+      display: none; /* Скрыто по умолчанию */
       transition: opacity 0.2s;
     }
 
@@ -204,7 +205,7 @@
     }
 
     .output-text {
-      font-size: 16px; /* Размер уменьшен до 16px для перевода тоже */
+      font-size: 18px;
       line-height: 1.4;
       color: #a8c7fa;
       white-space: pre-wrap;
@@ -352,8 +353,7 @@
     <div class="content">
       <div class="input-card">
         <div class="input-card-header">
-          <!-- Скрыта по умолчанию -->
-          <button class="clear-btn" id="clearBtn" style="display: none;">
+          <button class="clear-btn" id="clearBtn">
             <svg viewBox="0 0 24 24">
               <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
             </svg>
@@ -361,8 +361,7 @@
         </div>
         <textarea id="inputText" placeholder="Переводите текст"></textarea>
         
-        <!-- Скрыта по умолчанию -->
-        <button class="action-btn" id="translateBtn" style="display: none;">
+        <button class="action-btn" id="translateBtn">
           <span id="btnText">Перевести</span>
         </button>
       </div>
@@ -460,19 +459,17 @@
       apiContainer.style.display = 'none'; 
     }
 
-    apiKeyInput.addEventListener('input', () => {
-      storageSet('gemini_api_key', apiKeyInput.value.trim());
+    apiKeyInput.addEventListener('input', () => storageSet('gemini_api_key', apiKeyInput.value.trim()));
+
+    secretTitle.addEventListener('click', () => {
+      apiContainer.style.display = apiContainer.style.display === 'none' ? 'block' : 'none';
     });
 
-    // Логика показа/скрытия кнопок "X" и "Перевести"
+    // Обработчик скрытия/показа кнопок в зависимости от текста
     inputText.addEventListener('input', () => {
       const hasText = inputText.value.trim().length > 0;
       clearBtn.style.display = hasText ? 'flex' : 'none';
       translateBtn.style.display = hasText ? 'block' : 'none';
-    });
-
-    secretTitle.addEventListener('click', () => {
-      apiContainer.style.display = apiContainer.style.display === 'none' ? 'block' : 'none';
     });
 
     clearBtn.addEventListener('click', () => {
