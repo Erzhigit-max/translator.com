@@ -3,271 +3,418 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <!-- Манифест для полноэкранного режима -->
   <link rel="manifest" href="manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#1b1b1f">
+  <meta name="theme-color" content="#121212">
+  
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Google Переводчик</title>
-  
-  <!-- Подключение иконок Google Material Symbols -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
-  
   <style>
-    :root {
-      --bg-main: #131314;
-      --bg-surface: #1e1e20;
-      --bg-surface-variant: #282a2d;
-      --text-primary: #e3e2e6;
-      --text-secondary: #c4c6d0;
-      --accent: #a8c7fa;
-      --accent-secondary: #c2e7ff;
-      --divider: #44474f;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg-main); color: var(--text-primary); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-
-    /* Общие классы иконок */
-    .icon { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; font-feature-settings: 'liga'; }
-
-    /* --- ЭКРАН 1: ВВОД ТЕКСТА --- */
-    #inputScreen { display: flex; flex-direction: column; height: 100%; }
+    body {
+      background-color: #0e0f11;
+      color: #e3e2e6;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh; /* Поддержка для современных мобильных браузеров */
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
 
     /* Верхняя панель (Header) */
-    .header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
-    .header-icons { display: flex; align-items: center; gap: 16px; }
-    .star-btn { color: var(--text-primary); font-size: 26px; }
-    .logo-container { display: flex; align-items: center; font-size: 18px; font-weight: 500; gap: 4px; }
-    .logo-google { font-weight: 700; }
-    .logo-translate { color: var(--text-secondary); font-weight: 400; }
-    .avatar-btn { width: 34px; height: 34px; background-color: #000; border-radius: 50%; cursor: pointer; border: 1px solid var(--divider); }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      padding-top: max(16px, env(safe-area-inset-top));
+    }
 
-    /* Пилл "Расширенная" */
-    .advanced-pill { margin: 0 auto; background-color: var(--bg-surface-variant); padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 500; width: max-content; margin-bottom: 24px; }
+    .header-icon {
+      fill: #e3e2e6;
+      width: 28px;
+      height: 28px;
+    }
 
-    /* Область ввода */
-    .input-area { flex: 1; padding: 0 24px; display: flex; flex-direction: column; position: relative; }
-    #inputText { width: 100%; flex: 1; background: transparent; border: none; color: var(--text-primary); font-size: 32px; font-weight: 400; resize: none; outline: none; }
-    #inputText::placeholder { color: var(--text-secondary); }
-    .paste-btn { position: absolute; left: 24px; top: 60px; background-color: var(--bg-surface-variant); color: var(--accent); border: none; padding: 10px 16px; border-radius: 20px; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    .pen-icon { position: absolute; right: 24px; top: 0; color: var(--text-primary); font-size: 28px; }
+    .header-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
 
-    /* Кнопка "Перевести" (Появляется при вводе) */
-    #translateBtn { display: none; background-color: var(--accent); color: #003062; border: none; padding: 16px; border-radius: 30px; font-size: 16px; font-weight: 600; margin: 16px 24px; }
+    .header-title {
+      font-size: 20px;
+      font-weight: 400;
+      color: #e3e2e6;
+    }
 
-    /* Нижняя панель */
-    .bottom-panel { background-color: var(--bg-surface); border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 16px; padding-bottom: 32px; }
-    .drag-handle { width: 40px; height: 4px; background-color: var(--divider); border-radius: 2px; margin: 0 auto 20px; }
+    .header-title span {
+      font-weight: 400;
+    }
+
+    .header-pill {
+      background-color: #202124;
+      color: #8e9196;
+      border-radius: 14px;
+      padding: 4px 14px;
+      font-size: 13px;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .header-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background-color: #a8c7fa;
+      border: 2px solid #a8c7fa;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23003062'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E");
+      background-size: cover;
+    }
+
+    /* Блок для ввода API-ключа */
+    .api-key-container {
+      padding: 0 20px 10px 20px;
+    }
+
+    .api-key-input {
+      width: 100%;
+      background: #1e1f22;
+      border: 1px solid #333538;
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #c4c6d0;
+      font-size: 14px;
+      outline: none;
+    }
+
+    /* Основной контент */
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* Карточка ввода текста */
+    .input-card {
+      background-color: #1a1a1c;
+      border-radius: 0 0 32px 32px;
+      padding: 24px 24px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      min-height: 280px;
+    }
+
+    .input-card-header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+
+    .clear-btn {
+      background: none;
+      border: none;
+      color: #c4c6d0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clear-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: #e3e2e6;
+    }
+
+    textarea {
+      width: 100%;
+      flex: 1;
+      background: none;
+      border: none;
+      color: #e3e2e6;
+      font-size: 32px;
+      font-weight: 400;
+      line-height: 1.2;
+      resize: none;
+      outline: none;
+    }
+
+    textarea::placeholder {
+      color: #8e9196;
+    }
+
+    .action-btn {
+      background-color: #a8c7fa;
+      color: #003062;
+      border: none;
+      padding: 14px;
+      border-radius: 100px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 16px;
+      width: 100%;
+      transition: opacity 0.2s;
+    }
+
+    .action-btn:disabled {
+      opacity: 0.6;
+    }
+
+    /* Полоска-индикатор под карточкой */
+    .drag-handle {
+      width: 40px;
+      height: 4px;
+      background-color: #44474f;
+      border-radius: 2px;
+      margin: 12px auto 8px auto;
+    }
+
+    /* Выбор языка */
+    .language-selector {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 8px 24px;
+      gap: 12px;
+    }
+
+    .lang-btn {
+      flex: 1;
+      background: #1a1a1c;
+      border: none;
+      color: #e3e2e6;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 16px;
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .swap-btn {
+      background: none;
+      border: none;
+      color: #e3e2e6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     
-    .lang-selector { display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-main); border-radius: 16px; padding: 8px; margin-bottom: 24px; }
-    .lang-btn { flex: 1; text-align: center; padding: 12px; font-size: 16px; font-weight: 500; color: var(--text-primary); background: transparent; border: none; }
-    .swap-btn { color: var(--text-primary); padding: 8px; }
+    .swap-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
 
-    .action-buttons { display: flex; justify-content: space-around; align-items: flex-end; }
-    .action-btn-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-    .action-circle { width: 64px; height: 64px; border-radius: 50%; background-color: var(--bg-surface-variant); display: flex; justify-content: center; align-items: center; color: var(--accent); font-size: 28px; }
-    .action-circle.mic { width: 88px; height: 88px; background-color: #b4c5ff; color: #002b73; font-size: 36px; }
-    .action-label { font-size: 12px; color: var(--text-secondary); }
+    /* Карточка с результатом (появляется после перевода) */
+    .output-card {
+      background-color: #1a1a1c;
+      border-radius: 24px;
+      padding: 20px 24px;
+      margin: 8px 24px 24px 24px;
+      display: none; /* Скрыта по умолчанию */
+      flex-direction: column;
+      border: 1px solid #2b2d30;
+    }
 
-    /* --- ЭКРАН 2: РЕЗУЛЬТАТ ПЕРЕВОДА --- */
-    #resultScreen { display: none; flex-direction: column; height: 100%; background-color: var(--bg-main); }
-    
-    .result-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; }
-    .back-btn, .header-actions { color: var(--text-primary); font-size: 28px; }
-    
-    .result-content { padding: 0 24px; flex: 1; overflow-y: auto; }
-    
-    .source-lang { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; margin-top: 16px; }
-    .source-text { font-size: 28px; color: var(--text-primary); margin-bottom: 8px; word-break: break-word; }
-    .transcription { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
-    
-    .controls-row { display: flex; justify-content: space-between; color: var(--text-secondary); font-size: 24px; margin-bottom: 32px; border-bottom: 1px solid var(--divider); padding-bottom: 24px; }
-    .controls-left { display: flex; gap: 24px; }
+    .card-label {
+      font-size: 12px;
+      color: #8e9196;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-    .target-lang { font-size: 14px; color: var(--accent); margin-bottom: 8px; }
-    .target-text { font-size: 32px; color: var(--accent-secondary); margin-bottom: 8px; word-break: break-word; }
-    .target-type { font-size: 14px; color: var(--text-primary); margin-bottom: 24px; font-weight: 500; display: flex; gap: 8px; }
-    .target-type span { font-style: italic; color: var(--text-secondary); font-weight: 400; }
-    
-    .controls-right { display: flex; gap: 24px; justify-content: flex-end; color: var(--accent); font-size: 24px; }
+    .output-text {
+      font-size: 20px;
+      line-height: 1.4;
+      color: #a8c7fa;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
 
-    /* Неприметная буква ответа */
-    #subtleAnswer { font-size: 13px; color: var(--bg-surface-variant); text-align: right; margin-top: 32px; font-weight: 700; }
+    .subtle-answer {
+      font-size: 14px;
+      color: #1a1a1c; /* Чтобы было скрыто как на скрине 1, можно сделать цвет чуть темнее фона: #141517 или #2a2b2d */
+      text-shadow: 0 0 1px #2a2b2d;
+      margin-top: 15px;
+      font-weight: 700;
+      user-select: none;
+      text-align: right;
+    }
 
-    /* --- ПОПАП ДЛЯ API КЛЮЧА --- */
-    #apiPopup { display: none; position: absolute; bottom: 0; left: 0; right: 0; background-color: var(--bg-surface); padding: 24px; border-top-left-radius: 24px; border-top-right-radius: 24px; z-index: 100; box-shadow: 0 -4px 20px rgba(0,0,0,0.5); }
-    .api-popup-title { font-size: 18px; margin-bottom: 16px; font-weight: 500; }
-    .api-input { width: 100%; background: var(--bg-main); border: 1px solid var(--divider); padding: 12px; border-radius: 8px; color: white; margin-bottom: 16px; }
-    .api-save-btn { background: var(--accent); color: #000; padding: 10px 24px; border: none; border-radius: 20px; font-weight: 600; width: 100%; }
+    /* Нижняя панель действий (Декоративная под стиль скрина 2) */
+    .bottom-bar {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      padding: 16px 24px 32px 24px;
+      padding-bottom: max(32px, env(safe-area-inset-bottom));
+      margin-top: auto;
+    }
 
-    .overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 90; }
+    .bottom-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #c4c6d0;
+      font-size: 12px;
+      gap: 12px;
+    }
+
+    .bottom-icon-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: #202124;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .bottom-icon-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: #e3e2e6;
+    }
+
+    .main-mic-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #a8c7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .main-mic-btn svg {
+      width: 32px;
+      height: 32px;
+      fill: #003062;
+    }
+
   </style>
 </head>
 <body>
 
-  <!-- ЭКРАН 1: ВВОД -->
-  <div id="inputScreen">
-    <div class="header">
-      <div class="header-icons">
-        <span class="icon star-btn">star</span>
-      </div>
-      <div class="logo-container">
-        <span class="logo-google">Google</span>
-        <span class="logo-translate">Переводчик</span>
-      </div>
-      <div class="avatar-btn" id="avatarBtn"></div>
+  <div class="header">
+    <svg class="header-icon" viewBox="0 0 24 24">
+      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+    </svg>
+    <div class="header-center" id="secretTitle">
+      <div class="header-title">Google <span>Переводчик</span></div>
+      <div class="header-pill">Классическая</div>
     </div>
+    <div class="header-avatar"></div>
+  </div>
 
-    <div class="advanced-pill">Расширенная</div>
+  <div class="api-key-container" id="apiContainer" style="display: none;">
+    <input type="password" id="apiKey" class="api-key-input" placeholder="Gemini API Key...">
+  </div>
 
-    <div class="input-area">
+  <div class="content">
+    
+    <div class="input-card">
+      <div class="input-card-header">
+        <button class="clear-btn" id="clearBtn">
+          <!-- Иконка очистки/редактирования -->
+          <svg viewBox="0 0 24 24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
       <textarea id="inputText" placeholder="Переводите текст"></textarea>
-      <button class="paste-btn" id="pasteBtn"><span class="icon">content_paste</span> Вставить</button>
-      <span class="icon pen-icon" id="penIcon">edit</span>
-    </div>
-
-    <button id="translateBtn">Перевести</button>
-
-    <div class="bottom-panel" id="bottomPanel">
-      <div class="drag-handle"></div>
       
-      <div class="lang-selector">
-        <button class="lang-btn">английский</button>
-        <span class="icon swap-btn">swap_horiz</span>
-        <button class="lang-btn">русский</button>
-      </div>
-
-      <div class="action-buttons">
-        <div class="action-btn-col">
-          <div class="action-circle"><span class="icon">group</span></div>
-          <span class="action-label">Мгновенный перевод</span>
-        </div>
-        <div class="action-btn-col">
-          <div class="action-circle mic"><span class="icon">mic</span></div>
-        </div>
-        <div class="action-btn-col">
-          <div class="action-circle"><span class="icon">photo_camera</span></div>
-          <span class="action-label">Камера</span>
-        </div>
-      </div>
+      <button class="action-btn" id="translateBtn">
+        <span id="btnText">Перевести</span>
+      </button>
     </div>
+
+    <div class="drag-handle"></div>
+
+    <div class="language-selector">
+      <button class="lang-btn">английский</button>
+      <button class="swap-btn">
+        <svg viewBox="0 0 24 24">
+          <path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/>
+        </svg>
+      </button>
+      <button class="lang-btn">русский</button>
+    </div>
+
+    <div class="output-card" id="outputCard">
+      <div class="card-label">Перевод (Русский)</div>
+      <div id="outputText" class="output-text">Здесь появится перевод...</div>
+      <div id="subtleAnswer" class="subtle-answer"></div>
+    </div>
+
   </div>
 
-  <!-- ЭКРАН 2: РЕЗУЛЬТАТ ПЕРЕВОДА -->
-  <div id="resultScreen">
-    <div class="result-header">
-      <span class="icon back-btn" id="backBtn">arrow_back</span>
-      <div class="header-actions">
-        <span class="icon" style="margin-right: 16px;">close</span>
-        <span class="icon">star_border</span>
-        <span class="icon" style="margin-left: 16px;">more_vert</span>
+  <!-- Нижняя панель как на скрине 2 -->
+  <div class="bottom-bar">
+    <div class="bottom-action">
+      <div class="bottom-icon-btn">
+        <svg viewBox="0 0 24 24">
+          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+        </svg>
+      </div>
+      <span>Мгновенный перевод</span>
+    </div>
+    
+    <div class="bottom-action">
+      <div class="main-mic-btn">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+          <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
       </div>
     </div>
 
-    <div class="result-content">
-      <div class="source-lang">английский</div>
-      <div class="source-text" id="sourceTextDisplay"></div>
-      <div class="transcription" id="transcriptionDisplay">'text</div>
-      
-      <div class="controls-row">
-        <div class="controls-left">
-          <span class="icon">volume_up</span>
-        </div>
-        <div class="controls-right" style="color: var(--text-secondary);">
-          <span class="icon">content_copy</span>
-        </div>
+    <div class="bottom-action">
+      <div class="bottom-icon-btn">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 4h3l2-2h6l2 2h3c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm8 3c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"/>
+        </svg>
       </div>
-
-      <div class="target-lang">русский</div>
-      <div class="target-text" id="outputText">Здесь появится перевод...</div>
-      <div class="target-type">Существительное <span>text</span></div>
-
-      <div class="controls-row" style="border: none;">
-        <div class="controls-left" style="color: var(--accent);">
-          <span class="icon">volume_up</span>
-        </div>
-        <div class="controls-right">
-          <span class="icon">content_copy</span>
-          <span class="icon">thumb_up</span>
-          <span class="icon">thumb_down</span>
-        </div>
-      </div>
-
-      <!-- Неприметный ответ -->
-      <div id="subtleAnswer"></div>
+      <span>Камера</span>
     </div>
-  </div>
-
-  <!-- ПОПАП АПИ КЛЮЧА -->
-  <div class="overlay" id="overlay"></div>
-  <div id="apiPopup">
-    <div class="api-popup-title">Настройки ИИ</div>
-    <input type="password" id="apiKey" class="api-input" placeholder="Введите Gemini API Key...">
-    <button class="api-save-btn" id="saveApiBtn">Сохранить и закрыть</button>
   </div>
 
   <script>
-    // --- UI Логика ---
-    const inputScreen = document.getElementById('inputScreen');
-    const resultScreen = document.getElementById('resultScreen');
     const inputText = document.getElementById('inputText');
-    const translateBtn = document.getElementById('translateBtn');
-    const pasteBtn = document.getElementById('pasteBtn');
-    const penIcon = document.getElementById('penIcon');
-    const bottomPanel = document.getElementById('bottomPanel');
-    const backBtn = document.getElementById('backBtn');
     const outputText = document.getElementById('outputText');
-    const sourceTextDisplay = document.getElementById('sourceTextDisplay');
     const subtleAnswer = document.getElementById('subtleAnswer');
-    const avatarBtn = document.getElementById('avatarBtn');
-    const apiPopup = document.getElementById('apiPopup');
-    const overlay = document.getElementById('overlay');
+    const outputCard = document.getElementById('outputCard');
+    const clearBtn = document.getElementById('clearBtn');
+    const translateBtn = document.getElementById('translateBtn');
+    const btnText = document.getElementById('btnText');
     const apiKeyInput = document.getElementById('apiKey');
-    const saveApiBtn = document.getElementById('saveApiBtn');
+    const apiContainer = document.getElementById('apiContainer');
+    const secretTitle = document.getElementById('secretTitle');
 
-    // Логика отображения кнопки "Перевести"
-    inputText.addEventListener('input', () => {
-      if (inputText.value.trim().length > 0) {
-        pasteBtn.style.display = 'none';
-        penIcon.style.display = 'none';
-        bottomPanel.style.display = 'none';
-        translateBtn.style.display = 'block';
-      } else {
-        pasteBtn.style.display = 'flex';
-        penIcon.style.display = 'block';
-        bottomPanel.style.display = 'block';
-        translateBtn.style.display = 'none';
-      }
-    });
-
-    backBtn.addEventListener('click', () => {
-      resultScreen.style.display = 'none';
-      inputScreen.style.display = 'flex';
-    });
-
-    // Модальное окно API
-    avatarBtn.addEventListener('click', () => {
-      apiPopup.style.display = 'block';
-      overlay.style.display = 'block';
-    });
-    saveApiBtn.addEventListener('click', () => {
-      localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
-      apiPopup.style.display = 'none';
-      overlay.style.display = 'none';
-    });
-    if (localStorage.getItem('gemini_api_key')) {
-      apiKeyInput.value = localStorage.getItem('gemini_api_key');
-    }
-
-    // --- Логика ИИ (Gemini) ---
     const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
     const TIMEOUT_MS = 15000;
 
+    // Обновленные модели по вашему запросу
     const MODELS = [
+      { id: 'gemini-3.6-flash' },
       { id: 'gemini-3.5-flash-lite' },
-      { id: 'gemini-3.8-flash', thinking: 'low' },
       { id: 'gemini-3.1-flash-lite' }
     ];
 
@@ -278,6 +425,44 @@
       '3. Respond STRICTLY in JSON format: {"translation": "Текст на русском", "correct_option": "A" (или null если это не тест)}.';
 
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    function storageGet(key) {
+      try { return localStorage.getItem(key); } catch { return null; }
+    }
+
+    function storageSet(key, value) {
+      try { localStorage.setItem(key, value); } catch { }
+    }
+
+    // Загрузка ключа из хранилища
+    if (storageGet('gemini_api_key')) {
+      apiKeyInput.value = storageGet('gemini_api_key');
+      apiContainer.style.display = 'none'; 
+    }
+
+    apiKeyInput.addEventListener('input', () => storageSet('gemini_api_key', apiKeyInput.value.trim()));
+
+    // Секретный клик по шапке для вызова API ключа
+    secretTitle.addEventListener('click', () => {
+      apiContainer.style.display = apiContainer.style.display === 'none' ? 'block' : 'none';
+    });
+
+    clearBtn.addEventListener('click', () => {
+      inputText.value = '';
+      outputText.innerText = 'Здесь появится перевод...';
+      subtleAnswer.innerText = '';
+      outputCard.style.display = 'none'; // Прячем нижнюю карточку при очистке
+      inputText.focus();
+    });
+
+    // Изменение размера шрифта при вводе текста, если его много
+    inputText.addEventListener('input', () => {
+      if(inputText.value.length > 50) {
+        inputText.style.fontSize = '22px';
+      } else {
+        inputText.style.fontSize = '32px';
+      }
+    });
 
     async function fetchJson(url, options = {}) {
       const controller = new AbortController();
@@ -295,45 +480,87 @@
       const body = {
         systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
         contents: [{ role: 'user', parts: [{ text }] }],
-        generationConfig: { responseMimeType: "application/json", temperature: 0.1 }
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.1
+        }
       };
-      if (model.thinking) body.generationConfig.thinkingConfig = { thinkingLevel: model.thinking };
       return body;
     }
 
     function extractData(data) {
       const candidate = data?.candidates?.[0];
-      const text = (candidate?.content?.parts || []).filter(p => !p.thought).map(p => p.text).join('').trim();
-      if (!text) throw new Error('Модель не вернула ответ');
-      try { return JSON.parse(text); } catch { return { translation: text, correct_option: null }; }
+      const text = (candidate?.content?.parts || [])
+        .filter((p) => !p.thought && typeof p.text === 'string')
+        .map((p) => p.text)
+        .join('')
+        .trim();
+      if (!text) {
+        const reason = data?.promptFeedback?.blockReason || candidate?.finishReason;
+        throw new Error(reason ? `Модель не вернула ответ (${reason})` : 'Модель не вернула ответ');
+      }
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        return { translation: text, correct_option: null };
+      }
+    }
+
+    function apiError(res, data) {
+      const message = data?.error?.message || res.statusText || 'Неизвестная ошибка';
+      const err = new Error(`HTTP ${res.status}: ${message}`);
+      err.status = res.status;
+      err.fatal = res.status === 401 || res.status === 403 || (res.status === 400 && /api key/i.test(message));
+      err.retryable = res.status >= 500 || res.status === 429;
+      return err;
     }
 
     async function callModel(model, text, apiKey) {
-      const { res, data } = await fetchJson(`${API_BASE}/models/${model.id}:generateContent?key=${encodeURIComponent(apiKey)}`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(buildBody(text, model))
-      });
-      if (res.ok) return extractData(data);
-      
-      const err = new Error(`HTTP ${res.status}`);
-      err.retryable = res.status >= 500 || res.status === 429;
-      err.fatal = res.status === 400 || res.status === 401 || res.status === 403;
-      throw err;
+      let result;
+      try {
+        result = await fetchJson(
+          `${API_BASE}/models/${model.id}:generateContent?key=${encodeURIComponent(apiKey)}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(buildBody(text, model))
+          }
+        );
+      } catch (e) {
+        e.retryable = true; 
+        throw e;
+      }
+      if (result.res.ok) return extractData(result.data);
+      throw apiError(result.res, result.data);
     }
 
     async function processText(text, apiKey) {
+      const tried = new Set();
+      let lastError = null;
+
       for (const model of MODELS) {
+        if (tried.has(model.id)) continue;
+        tried.add(model.id);
         for (let attempt = 1; attempt <= 2; attempt++) {
           try {
             return await callModel(model, text, apiKey);
           } catch (e) {
+            lastError = e;
             if (e.fatal) throw e;
             if (!e.retryable || attempt === 2) break;
-            translateBtn.innerText = 'Ожидание сервера...';
+            btnText.innerText = 'Сервер занят, повтор...';
             await sleep(1000);
           }
         }
       }
-      throw new Error('Все серверы заняты. Попробуйте позже.');
+      throw lastError || new Error('Все серверы недоступны');
+    }
+
+    function humanize(err) {
+      if (err.name === 'AbortError') return `Время ожидания истекло. Проверьте интернет.`;
+      if (err.retryable && !err.status) return 'Нет связи с сервером Google.';
+      if (err.status === 429) return 'Превышен лимит запросов API. Подождите.';
+      return err.message;
     }
 
     translateBtn.addEventListener('click', async () => {
@@ -342,34 +569,33 @@
 
       if (!text) return;
       if (!apiKey) {
-        avatarBtn.click(); // Открываем попап
+        alert('Введите ключ API!');
+        apiContainer.style.display = 'block';
         return;
       }
+      storageSet('gemini_api_key', apiKey);
 
-      translateBtn.innerText = 'Перевод...';
+      btnText.innerText = 'Перевод...';
       translateBtn.disabled = true;
+      subtleAnswer.innerText = ''; 
+      
+      // Показываем карточку вывода
+      outputCard.style.display = 'flex';
+      outputText.innerText = 'Загрузка...';
 
       try {
         const result = await processText(text, apiKey);
         
-        // Обновляем UI
-        sourceTextDisplay.innerText = text;
         outputText.innerText = result.translation || 'Перевод пуст';
         
         if (result.correct_option && result.correct_option !== 'null') {
           subtleAnswer.innerText = String(result.correct_option).toUpperCase();
-        } else {
-          subtleAnswer.innerText = '';
         }
-
-        // Переключаем экраны
-        inputScreen.style.display = 'none';
-        resultScreen.style.display = 'flex';
-
+        
       } catch (err) {
-        alert(err.name === 'AbortError' ? 'Таймаут. Проверьте интернет.' : err.message);
+        outputText.innerText = `Ошибка: ${humanize(err)}`;
       } finally {
-        translateBtn.innerText = 'Перевести';
+        btnText.innerText = 'Перевести';
         translateBtn.disabled = false;
       }
     });
